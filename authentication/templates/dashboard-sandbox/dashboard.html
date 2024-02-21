@@ -1,0 +1,39 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'dashboard-sandbox/dashboard.css' %}">
+  <!-- Add any other meta tags, stylesheets, or scripts here -->
+</head>
+<body>
+
+<div class="container">
+  <h2>Setup New Chatbot</h2>
+  <form method="post" action="{% url 'start_chatbot' %}">
+    {% csrf_token %}
+    <!-- Participant ID input -->
+    <div>
+      <label for="participant_id">Participant ID:</label>
+      <input type="text" id="participant_id" name="participant_id" required>
+    </div>
+    
+    <!-- Chatbot group selection option -->
+    <div>
+      <label for="chatbot_group">Chatbot Group:</label>
+      <select id="chatbot_group" name="chatbot_group" required>
+        <option value="A">Group A - Helpful Chatbot</option>
+        <option value="B">Group B - Neutral Chatbot</option>
+      </select>
+    </div>
+    
+    <!-- Submit button -->
+    <button type="submit">Start Chatbot</button>
+  </form>
+</div>
+
+</body>
+</html>
