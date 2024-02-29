@@ -8,36 +8,37 @@ from django.utils import timezone
 # View for handling chatbot interactions
 def chat(request):
     if request.method == 'POST':
-        message_text = request.POST.get('message')
+        message_text = request.POST.get('message').strip().lower()  # Normalize the input
         participant_id = request.POST.get('participant_id')
         
-        # Retrieve the participant's conversation object
         participant = get_object_or_404(ParticipantConversation, participant_id=participant_id)
         
-        # Assuming you're handling a user message here
+        # Append the user's message to the conversation
         user_message = {
             "type": "User",
             "message": message_text,
             "timestamp": timezone.now().isoformat(),
         }
+        participant.chatbot_conversation.append(user_message)
         
-        # Append the user message to the conversation
-        if not participant.chatbot_conversation:
-            participant.chatbot_conversation = [user_message]
+        # Decide the chatbot's response based on the user's message
+        if message_text == "yes":
+            chatbot_response_text = "Great! Here's what you can do next: [provide next step or information]."
+        elif message_text == "no":
+            chatbot_response_text = "Understood. Feel free to ask me anything else or say 'end' to finish."
         else:
-            participant.chatbot_conversation.append(user_message)
+            # Fallback if the user's response doesn't match expected options
+            chatbot_response_text = "I didn't catch that. Could you please respond with 'Yes' or 'No'?"
         
-        # Here, you would also handle generating and appending the chatbot's response in a similar manner
+        chatbot_response = {
+            "type": "Chatbot",
+            "message": chatbot_response_text,
+            "timestamp": timezone.now().isoformat(),
+        }
+        participant.chatbot_conversation.append(chatbot_response)
         
-        participant.save()  # Save the updated conversation
+        participant.save()
         
-        # Dummy response for now
-        response_data = {'message': 'This is a dummy response from the chatbot.'}
-        return JsonResponse(response_data)
+        return JsonResponse({'message': chatbot_response_text})
     else:
-        return render(request, 'chatbot-interface/chat.html')
-
-# View for displaying the homepage/dashboard
-def homepage(request):
-    participants = ParticipantConversation.objects.all()
-    return render(request, 'dashboard.html', {'participants': participants})
+        return HttpResponse('This endpoint supports only POST requests.')

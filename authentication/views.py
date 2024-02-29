@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.utils import timezone
+from chatbot.models import ParticipantConversation
+from chatbot.utils.chatbot_messages import get_initial_messages
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 
 def login_view(request):
     if request.method == 'POST':
@@ -30,13 +35,42 @@ def dashboard_view(request):
 
 
 def start_chatbot(request):
-    if request.method == 'POST':
-        participant_id = request.POST.get('participant_id')
-        chatbot_group = request.POST.get('chatbot_group')
+    if request.method != 'POST':
+        return HttpResponse('Only POST requests are allowed.', status=405)
 
-        # This will perform a logic to start the chatbot with the provided participant ID and chatbot group
+    participant_id = request.POST.get('participant_id')
+    chatbot_group = request.POST.get('chatbot_group')
 
-        # Our dummy response for now
-        return HttpResponse(f'Starting chatbot for Participant ID {participant_id} in Group {chatbot_group}')
-    else:
-        return HttpResponse('Only POST requests are allowed.')
+    # Validate request data
+    if not participant_id or not chatbot_group:
+        return HttpResponseBadRequest('Missing participant ID or chatbot group.')
+
+    if chatbot_group not in ['Group A - Helpful Chatbot', 'Group B - Neutral Chatbot']:
+        return HttpResponseBadRequest('Invalid chatbot group specified.')
+
+    try:
+        participant, created = ParticipantConversation.objects.get_or_create(
+            participant_id=participant_id,
+            defaults={'chatbot_type': chatbot_group, 'chatbot_conversation': []}
+        )
+
+        initial_messages = get_initial_messages(chatbot_group)
+        
+        if participant.chatbot_conversation is None:
+            participant.chatbot_conversation = initial_messages
+        else:
+            participant.chatbot_conversation.extend(initial_messages)
+        
+        participant.save()
+
+    except IntegrityError as e:
+        # Handle unique constraint violations, etc.
+        return HttpResponseBadRequest('Database integrity error: ' + str(e))
+    except ValidationError as e:
+        # Handle validation errors from the model
+        return HttpResponseBadRequest('Validation error: ' + str(e))
+    except Exception as e:
+        # Catch-all for any other exceptions
+        return HttpResponseBadRequest('An unexpected error occurred: ' + str(e))
+
+    return HttpResponse(f'Starting chatbot for Participant ID {participant_id} in Group {chatbot_group}')
