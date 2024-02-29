@@ -1,0 +1,43 @@
+[
+    {
+        "type": "Neutral Chatbot",
+        "message": "Hi there, I'm Chatty the Chatbot. I’ll be here to keep you company throughout your test and provide some extra support.",
+        "timestamp": "2024-02-15T13:20:00Z"
+    },
+
+    {
+        "type":"Neutral Chatbot",
+        "message": "Would you like to hear some strategies to help you with your test?",
+        "timestamp": "2024-02-15T13:20:00Z"
+    },
+
+    {
+        "type": "User",
+        "message": "Yes",
+        "timestamp":"2024-02-15T13:21:00Z"
+    },
+
+    {
+        "type": "Neutral Chatbot",
+        "message": "Taking a maths test can be a stressful and anxiety- provoking task for many people. Research suggests that deep breathing can help reduce these feelings of stress or anxiety. Try slowly inhaling through your nose and exhaling through your mouth 10 times before returning to the exercise.",
+        "timestamp":"2024-02-15T13:21:00Z"
+    },
+
+    {
+        "type": "Neutral Chatbot",
+        "message": "Would you like to hear another strategy?",
+        "timestamp": "2024-02-15T13:32:00Z"
+    },
+
+    {
+        "type": "User",
+        "message": "No",
+        "timestamp":"2024-02-15T13:33:00Z"
+    },
+
+    {
+        "type":"Neutral Chatbot",
+        "message": "Sounds like you've got this covered! Just let me know if you'd like to hear more.",
+        "timestamp":"2024-02-15T13:33:00Z"
+    }
+]
