@@ -7,13 +7,12 @@
   <title>Dashboard</title>
   {% load static %}
   <link rel="stylesheet" type="text/css" href="{% static 'dashboard-sandbox/dashboard.css' %}">
-  <!-- Add any other meta tags, stylesheets, or scripts here -->
 </head>
 <body>
 
 <div class="container">
   <h2>Setup New Chatbot</h2>
-  <form method="post" action="{% url 'start_chatbot' %}">
+  <form id="setupChatbotForm" method="post" onsubmit="startChatbot(event)">
     {% csrf_token %}
     <!-- Participant ID input -->
     <div>
@@ -25,8 +24,8 @@
     <div>
       <label for="chatbot_group">Chatbot Group:</label>
       <select id="chatbot_group" name="chatbot_group" required>
-        <option value="A">Group A - Helpful Chatbot</option>
-        <option value="B">Group B - Neutral Chatbot</option>
+        <option value="Group A - Helpful Chatbot">Group A - Helpful Chatbot</option>
+        <option value="Group B - Neutral Chatbot">Group B - Neutral Chatbot</option>
       </select>
     </div>
     
@@ -34,6 +33,6 @@
     <button type="submit">Start Chatbot</button>
   </form>
 </div>
-
+<script src="{% static 'dashboard-sandbox/dashboard.js' %}"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils import timezone
 from chatbot.models import ParticipantConversation
 from chatbot.utils.chatbot_messages import get_initial_messages
@@ -33,6 +33,10 @@ def dashboard_view(request):
     # This view is now secured and can only be accessed by logged-in users
     return render(request, 'dashboard-sandbox/dashboard.html')
 
+def splash_screen(request, participant_id):
+    context = {'participant_id': participant_id}
+    return render(request, 'splash-screen/splash_screen.html', context)
+
 
 def start_chatbot(request):
     if request.method != 'POST':
@@ -49,19 +53,37 @@ def start_chatbot(request):
         return HttpResponseBadRequest('Invalid chatbot group specified.')
 
     try:
+        chatbot_group_key = {'Group A - Helpful Chatbot': 'Helpful', 
+                             'Group B - Neutral Chatbot': 'Neutral'}.get(chatbot_group, None)
+        if not chatbot_group_key:
+            return HttpResponseBadRequest('Invalid chatbot group specified.')
+        
         participant, created = ParticipantConversation.objects.get_or_create(
             participant_id=participant_id,
-            defaults={'chatbot_type': chatbot_group, 'chatbot_conversation': []}
+            defaults={'chatbot_type': chatbot_group_key, 'chatbot_conversation': []}
         )
+        # To ensure that chatbot_conversation is updated regardless of get_or_create outcome
+        if created or participant.chatbot_conversation is None:
+            participant.chatbot_conversation = initial_messages
+        else:
+            participant.chatbot_conversation.extend(initial_messages)  
 
-        initial_messages = get_initial_messages(chatbot_group)
+        initial_messages = get_initial_messages(chatbot_group_key)
+        print(initial_messages)
         
         if participant.chatbot_conversation is None:
             participant.chatbot_conversation = initial_messages
         else:
             participant.chatbot_conversation.extend(initial_messages)
         
+        participant.chatbot_type = chatbot_group_key
         participant.save()
+
+        welcome_message = initial_messages[0] if initial_messages else {}
+        return JsonResponse({
+            'message': welcome_message.get('message', ''),
+            'type': welcome_message.get('type', '')
+        })
 
     except IntegrityError as e:
         # Handle unique constraint violations, etc.

@@ -12,7 +12,7 @@ class ParticipantConversation(models.Model):
         ("Neutral", "Group B - Neutral Chatbot"),
     ]
     chatbot_type = models.CharField(max_length=50, choices=CHATBOT_CHOICES)
-    chatbot_conversation = models.JSONField()
+    chatbot_conversation = models.JSONField(blank=True, default = list)
     # Set to when the user starts their test
     chatbot_started_at = models.DateTimeField(null=True, blank=True)
     # Set to when the user finishes their test
