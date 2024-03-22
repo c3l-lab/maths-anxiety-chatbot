@@ -185,7 +185,7 @@ echo 'Deployment successfully completed.'
 
 EOF_SERVER
 
-# Run the script on the server
-ssh -i "$SSH_KEY_FILE" ubuntu@"$DOMAIN" <tmp.sh
+# Run the script on the server (don't worry about host key checking)
+ssh -o StrictHostKeyChecking=no -i "$SSH_KEY_FILE" ubuntu@"$DOMAIN" <tmp.sh
 
 rm tmp.sh
