@@ -37,31 +37,48 @@
 #   	- `ssh-add ~/.ssh/id_ed25519`
 #   	- `git clone git@github.com:c3l-lab/maths-anxiety-chatbot.git`
 #
-# Now we can setup a Github Actions workflow to SSH into the EC2
-# instance and run this script to deploy the Django web application.
+# Now we can setup a Github Actions workflow that will run this
+# script to deploy the Django web application.
 #
 ####################################################################
 
 set -e # Exit on error
 
-if [ "$(pwd)" != "/home/ubuntu/maths-anxiety-chatbot" ]; then
-	echo "This script should be run from the maths-anxiety-chatbot git repository."
-	exit 1
+# If a .env file exists, load it
+if [ -f .env ]; then
+	# shellcheck source=/dev/null
+	source .env
 fi
 
-# Check that the environment variables are set
-if [ "$SECRET_KEY" == "" ]; then
-	echo "The SECRET_KEY environment variable is not set."
-	exit 1
-fi
-if [ "$DOMAIN" == "" ]; then
-	echo "The DOMAIN environment variable is not set."
-	exit 1
-fi
+# Check that all our environment variables are set
+for var in SSH_KEY_FILE \
+	DOMAIN \
+	DJANGO_SUPERUSER_USERNAME \
+	DJANGO_SUPERUSER_EMAIL \
+	DJANGO_SUPERUSER_PASSWORD \
+	DJANGO_SECRET_KEY \
+	DEPLOY_BRANCH \
+	DJANGO_SETTINGS_MODULE; do
+	if [ -z "${!var}" ]; then
+		echo "The $var environment variable is not set."
+		exit 1
+	fi
+done
 
-# Set the secret key
-echo "$SECRET_KEY" >./secret_key.txt
+# Create a temporary script that we'll then run on the web server
+tee tmp.sh <<EOF_SERVER
+cd ~/maths-anxiety-chatbot
+git fetch
+git pull origin "$DEPLOY_BRANCH"
 
+# Set the secret key and environment variables
+echo "$DJANGO_SECRET_KEY" >./secret_key.txt
+export DJANGO_SUPERUSER_USERNAME="$DJANGO_SUPERUSER_USERNAME"
+export DJANGO_SUPERUSER_EMAIL="$DJANGO_SUPERUSER_EMAIL"
+export DJANGO_SUPERUSER_PASSWORD="$DJANGO_SUPERUSER_PASSWORD"
+export DJANGO_SETTINGS_MODULE="$DJANGO_SETTINGS_MODULE"
+
+# Setup ubuntu packages
 sudo apt update
 sudo apt install pipx nginx python3.11 -y
 
@@ -94,9 +111,9 @@ server {
         proxy_pass http://127.0.0.1:8000/; 
 				proxy_redirect off;
 				proxy_http_version 1.1;
-				proxy_set_header Upgrade \$http_upgrade;
+				proxy_set_header Upgrade \\\$http_upgrade;
 				proxy_set_header Connection "upgrade";
-				proxy_set_header Host \$host;
+				proxy_set_header Host \\\$host;
     }
 		location = /favicon.ico { access_log off; log_not_found off; }
 		location /static/ {
@@ -111,9 +128,9 @@ server {
         proxy_pass http://127.0.0.1:8000/;
 				proxy_redirect off;
 				proxy_http_version 1.1;
-				proxy_set_header Upgrade \$http_upgrade;
+				proxy_set_header Upgrade \\\$http_upgrade;
 				proxy_set_header Connection "upgrade";
-				proxy_set_header Host \$host;
+				proxy_set_header Host \\\$host;
     }
 		location = /favicon.ico { access_log off; log_not_found off; }
 		location /static/ {
@@ -121,7 +138,7 @@ server {
 		}
 }
 EOF
-sudo sed -i "/user www-data;/c\user ubuntu;" /etc/nginx/nginx.conf # Change the user to ubuntu
+sudo sed -i "/user www-data;/c\\user ubuntu;" /etc/nginx/nginx.conf # Change the user to ubuntu
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo rm -f /etc/nginx/sites-enabled/maths-anxiety-chatbot
 sudo ln -s /etc/nginx/sites-available/maths-anxiety-chatbot /etc/nginx/sites-enabled/
@@ -130,6 +147,9 @@ sudo systemctl restart nginx
 # Setup the Django static files
 sudo rm -rf ./static
 poetry run python manage.py collectstatic --noinput
+
+# Run the Django migrations
+poetry run python manage.py migrate
 
 # Setup the systemd service
 sudo tee /etc/systemd/system/maths-anxiety-chatbot.service <<EOF
@@ -157,3 +177,15 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable maths-anxiety-chatbot # Enable the service to start on boot
 sudo systemctl restart maths-anxiety-chatbot
+
+# Create the superuser
+poetry run python manage.py createsuperuser --no-input || true
+
+echo 'Deployment successfully completed.'
+
+EOF_SERVER
+
+# Run the script on the server
+ssh -i "$SSH_KEY_FILE" ubuntu@"$DOMAIN" <tmp.sh
+
+rm tmp.sh
