@@ -21,7 +21,7 @@ jobs:
 
       - name: "Setup SSH key"
         run: |
-          echo "${{ secrets.PRODUCTION_SSH_KEY }}" > $SSH_KEY_FILE"
+          echo "{{ secrets.PRODUCTION_SSH_KEY }}" > $SSH_KEY_FILE"
           chmod 400 $SSH_KEY_FILE
       - name: "Deploy"
         run: |
