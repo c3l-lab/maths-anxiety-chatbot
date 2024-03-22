@@ -23,7 +23,7 @@ jobs:
       - name: "Setup SSH key"
         run: |
           # Get secret from {{ secrets.PRODUCTION_SSH_KEY }} and put it in the SSH_KEY_FILE
-          printenv PRODUCTION_SSH_KEY > $SSH_KEY_FILE
+          echo "$PRODUCTION_SSH_KEY" > $SSH_KEY_FILE
           chmod 400 $SSH_KEY_FILE
       - name: "Deploy"
         run: |
