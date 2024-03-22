@@ -1,7 +1,0 @@
-<div id="startScreen" style="display:none;"> <!-- Ensure this is hidden by default -->
-    <div class="content">
-        <!-- Assuming you have some way of setting the participant_id when rendering this template -->
-        <p>Welcome, Participant <span id="participantIdDisplay"></span>. Please click "Start Test" once you have begun your maths test.</p>
-        <button id="startTestButton">Start Test</button>
-    </div>
-  </div>

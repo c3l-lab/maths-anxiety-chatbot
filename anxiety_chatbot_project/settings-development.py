@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "chatbot",
-    "authentication",
 ]
 
 ASGI_APPLICATION = "anxiety_chatbot_project.asgi.application"
@@ -122,7 +121,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 STATICFILES_DIRS = [
-    BASE_DIR / "authentication" / "static",
+    BASE_DIR / "chatbot" / "static",
 ]
 
 # Default primary key field type
