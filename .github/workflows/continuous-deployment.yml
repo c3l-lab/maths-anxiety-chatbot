@@ -13,7 +13,7 @@ jobs:
       DJANGO_SECRET_KEY: "{{ secrets.DJANGO_SECRET_KEY }}"
       DJANGO_SETTINGS_MODULE: "anxiety_chatbot_project.settings-production"
       DOMAIN: "chatty.c3l.ai"
-      SSH_KEY_FILE: "~/key.pem"
+      SSH_KEY_FILE: "/tmp/key.pem"
       DEPLOY_BRANCH: "main"
       PRODUCTION_SSH_KEY: "{{ secrets.PRODUCTION_SSH_KEY }}"
     steps:
