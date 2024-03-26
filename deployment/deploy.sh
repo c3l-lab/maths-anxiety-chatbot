@@ -142,7 +142,7 @@ RestartSec=60
 User=ubuntu
 Group=ubuntu
 Environment="DJANGO_LOG_LEVEL=debug"
-Environment="DJANGO_SETTINGS_MODULE=anxiety_chatbot_project.settings-production"
+Environment="DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}"
 WorkingDirectory=/home/ubuntu/maths-anxiety-chatbot
 ExecStart=/home/ubuntu/.local/bin/poetry run daphne anxiety_chatbot_project.asgi:application
 
