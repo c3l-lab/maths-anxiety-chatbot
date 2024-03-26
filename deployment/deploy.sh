@@ -28,7 +28,7 @@ for var in SSH_KEY_FILE \
 		echo "Error: The $var environment variable is not set."
 		echo ""
 		echo "The following environment variables must be set:"
-		echo "  SSH_KEY_FILE: The path to the SSH key .pem file that has access to the server"
+		echo "  SSH_KEY_FILE: The path to the SSH key .pem file that has access to the server, these .pem files can be found in AWS Secrets Manager"
 		echo "  DOMAIN: The domain name of the server (chatty.c3l.ai)"
 		echo "  DJANGO_SUPERUSER_USERNAME: The username of the superuser (lab.manager)"
 		echo "  DJANGO_SUPERUSER_EMAIL: The email of the superuser (lab.manager@c3l.ai)"
