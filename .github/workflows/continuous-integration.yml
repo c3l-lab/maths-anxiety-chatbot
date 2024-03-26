@@ -4,7 +4,7 @@ on:
   push:
     branches: ["dev"]
 jobs:
-  deploy_production:
+  deploy_uat:
     runs-on: "ubuntu-22.04"
     env:
       DJANGO_SUPERUSER_USERNAME: "lab.manager"
