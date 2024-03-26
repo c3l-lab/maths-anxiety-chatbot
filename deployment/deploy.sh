@@ -2,43 +2,8 @@
 
 ####################################################################
 #
-# This script sets up an Ubuntu EC2 instance to serve the
-# maths-anxiety-chatbot Django web application.
-#
-# Before starting, setup the following AWS resources:
-#   1. Create a new EC2 instance
-#   	- Name: maths-anxiety-chatbot
-#   	- OS: Ubuntu Server 22.04 LTS
-#   	- Architecture: x86
-#   	- Instance Type: t2.micro
-#   	- Key pair: (Create a new RSA .pem key pair) maths-anxiety-chatbot-key-pair
-#   		- Save the .pem file to AWS Secrets Manager
-#   	- VPC and Subnet: (pick the defaults)
-#   	- Security Group: (Create a new security group) maths-anxiety-chatbot-security-group
-#   		- Add rules for SSH, HTTP, and HTTPS access with source = 0.0.0.0/0
-#   	- Storage: 20GB
-#   2. Create a new Elastic IP
-#   	- Name: maths-anxiety-chatbot-elastic-ip
-#   3. Associate the Elastic IP with the EC2 instance
-#   4. Create a new A record in the Route 52 DNS settings
-#   	- The Route52 settings are in the C3L-MANAGEMENT AWS account
-#   	- Record name: chatty.c3l.ai
-#   	- Record type: A
-#   	- Value: (the Elastic IP address)
-#   5. SSH into the EC2 instance
-#   	- `ssh -i "maths-anxiety-chatbot-key-pair.pem" ubuntu@chatty.c3l.ai`
-#   6. Generate a new SSH key pair on the EC2 instance
-#   	- `ssh-keygen -t ed25519 -C "chatty.c3l.ai"`
-#   7. Create a deploy key in the project GitHub repository
-#   	- Name: chatty.c3l.ai
-#   	- Public key: (the contents of the .pub file created by `ssh-keygen`)
-#   8. Clone the project repository to the EC2 instance
-#   	- `eval "$(ssh-agent -s)"`
-#   	- `ssh-add ~/.ssh/id_ed25519`
-#   	- `git clone git@github.com:c3l-lab/maths-anxiety-chatbot.git`
-#
-# Now we can setup a Github Actions workflow that will run this
-# script to deploy the Django web application.
+# This script deploys the maths-anxiety-chatbot django app to an EC2
+# instance.
 #
 ####################################################################
 
@@ -60,7 +25,17 @@ for var in SSH_KEY_FILE \
 	DEPLOY_BRANCH \
 	DJANGO_SETTINGS_MODULE; do
 	if [ -z "${!var}" ]; then
-		echo "The $var environment variable is not set."
+		echo "Error: The $var environment variable is not set."
+		echo ""
+		echo "The following environment variables must be set:"
+		echo "  SSH_KEY_FILE: The path to the SSH key .pem file that has access to the server"
+		echo "  DOMAIN: The domain name of the server (chatty.c3l.ai)"
+		echo "  DJANGO_SUPERUSER_USERNAME: The username of the superuser (lab.manager)"
+		echo "  DJANGO_SUPERUSER_EMAIL: The email of the superuser (lab.manager@c3l.ai)"
+		echo "  DJANGO_SUPERUSER_PASSWORD: The password of the superuser"
+		echo "  DJANGO_SECRET_KEY: The secret key used by Django for crypto hashing and signing"
+		echo "  DEPLOY_BRANCH: The branch to deploy (main)"
+		echo "  DJANGO_SETTINGS_MODULE: The Django settings module to use (anxiety_chatbot_project.settings-production)"
 		exit 1
 	fi
 done
@@ -83,10 +58,9 @@ sudo apt update
 sudo apt install pipx nginx python3.11 -y
 
 # Install pipx and poetry
-pipx ensurepath
-# shellcheck source=/dev/null
-. "$HOME/.bashrc" # Load the new PATH
 pipx install poetry
+pipx ensurepath
+. "/home/ubuntu/.bashrc" # Load the new PATH
 poetry install
 
 # Install certbot and get some LetsEncrypt certificates

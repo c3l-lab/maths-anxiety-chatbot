@@ -1,8 +1,8 @@
-name: "Continuous Deployment"
+name: "Continuous Integration"
 
 on:
   push:
-    branches: ["main"]
+    branches: ["dev"]
 jobs:
   deploy_production:
     runs-on: "ubuntu-22.04"
@@ -10,12 +10,12 @@ jobs:
       DJANGO_SUPERUSER_USERNAME: "lab.manager"
       DJANGO_SUPERUSER_EMAIL: "lab.manager@c3l.ai"
       DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
-      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY_PRODUCTION }}
-      DJANGO_SETTINGS_MODULE: "anxiety_chatbot_project.settings-production"
-      DOMAIN: "chatty.c3l.ai"
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY_UAT }}
+      DJANGO_SETTINGS_MODULE: "anxiety_chatbot_project.settings-uat"
+      DOMAIN: "chatty-uat.c3l.ai"
       SSH_KEY_FILE: "/tmp/key.pem"
-      DEPLOY_BRANCH: "main"
-      SSH_KEY: ${{ secrets.SSH_KEY_PRODUCTION }}
+      DEPLOY_BRANCH: "dev"
+      SSH_KEY: ${{ secrets.SSH_KEY_UAT }}
     steps:
       - name: "Checkout code"
         uses: "actions/checkout@v4"

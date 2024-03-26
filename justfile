@@ -12,6 +12,9 @@ default:
 server: migrate create-superuser
 	poetry run python manage.py runserver 8000 --settings=anxiety_chatbot_project.settings-development
 
+deploy:
+	./deployment/deploy.sh
+
 migrate:
 	poetry run python manage.py migrate
 
