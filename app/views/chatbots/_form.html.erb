@@ -1,0 +1,36 @@
+<%= form_with(model: chatbot) do |form| %>
+  <% if chatbot.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(chatbot.errors.count, "error") %>
+        prohibited this chatbot from being saved:</h2>
+      <ul>
+        <% chatbot.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div>
+    <%= form.label :participant_id, style: "display: block" %>
+    <%= form.text_field :participant_id %>
+  </div>
+  <div>
+    <%= form.label :chatbot_type, style: "display: block" %>
+    <%= form.select :chatbot_type, Chatbot::CHATBOT_TYPES %>
+  </div>
+  <div>
+    <%= form.label :conversation, style: "display: block" %>
+    <%= form.text_field :conversation %>
+  </div>
+  <div>
+    <%= form.label :conversation_started_at, style: "display: block" %>
+    <%= form.datetime_field :conversation_started_at %>
+  </div>
+  <div>
+    <%= form.label :conversation_finished_at, style: "display: block" %>
+    <%= form.datetime_field :conversation_finished_at %>
+  </div>
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

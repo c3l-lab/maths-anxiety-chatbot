@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  participant_id: MyString
+  chatbot_type: MyString
+  conversation: 
+  conversation_started_at: 2024-04-03 11:07:08
+  conversation_finished_at: 2024-04-03 11:07:08
+
+two:
+  participant_id: MyString
+  chatbot_type: MyString
+  conversation: 
+  conversation_started_at: 2024-04-03 11:07:08
+  conversation_finished_at: 2024-04-03 11:07:08

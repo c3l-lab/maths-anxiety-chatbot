@@ -1,0 +1,50 @@
+<!--
+<h2>Log in</h2>
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <div class="field">
+    <%= f.label :login %><br/>
+    <%= f.text_field :login, autofocus: true %>
+  </div>
+  <div class="field">
+    <%= f.label :password %><br/>
+    <%= f.password_field :password, autocomplete: "current-password" %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Log in" %>
+  </div>
+<% end %>
+<%= link_to "Log in", new_session_path(resource_name) %><br/>
+-->
+<div class="hero-body">
+  <div class="container has-text-centered">
+    <div class="columns">
+      <div class="column"></div>
+      <div class="column">
+        <div class="title">Sign in</div>
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+          <div class="field">
+            <%= f.text_field :login, class: "input", autofocus: true, placeholder: "Username" %>
+          </div>
+          <div class="field">
+            <%= f.password_field :password,
+                             class: "input",
+                             autocomplete: "current-password",
+                             placeholder: "Password" %>
+          </div>
+          <% if flash[:notice] %>
+            <div class="notification is-info is-light"><%= flash[:notice] %></div>
+          <% end %>
+          <% if flash[:alert] %>
+            <div class="notification is-danger is-light"><%= flash[:alert] %></div>
+          <% end %>
+          <%= f.submit "Log in",
+                   class: "button is-link is-fullwidth has-text-weight-bold",
+                   data: {
+                     "turbo-submits-with": "Logging in...",
+                   } %>
+        <% end %>
+      </div>
+      <div class="column"></div>
+    </div>
+  </div>
+</div>

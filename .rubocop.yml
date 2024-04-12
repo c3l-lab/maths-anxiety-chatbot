@@ -1,0 +1,11 @@
+require:
+  - rubocop-rails
+
+# Don't force a comment at the top of every class
+Style/Documentation:
+  Exclude:
+    - "**/*.rb"
+
+AllCops:
+  Exclude:
+    - "db/schema.rb"

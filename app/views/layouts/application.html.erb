@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<%# We'll force the light theme with Bulma %>
+<html data-theme="light">
+  <head>
+    <title>MathsAnxietyChatbot</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%# Bulma.css for styling %>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
+    >
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body>
+    <nav
+      class="navbar has-background-light"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <div class="navbar-brand">
+        <a class="navbar-item icon-text title has-text-dark" href="/">
+          <span class="icon">
+            <i class="fa-regular fa-file-lines"></i>
+          </span>
+          <span>Chatty</span>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <% if user_signed_in? %>
+          <div class="navbar-start">
+            <a class="navbar-item" href="/">
+              Home
+            </a>
+            <%= link_to "Chatbots", chatbots_path, class: "navbar-item" %>
+          </div>
+        <% end %>
+        <div class="navbar-end">
+          <% if user_signed_in? %>
+            <div class="navbar-item">
+              <%= button_to destroy_user_session_path, method: :delete, class: "button is-link",
+                data: { 'turbo-submits-with': 'Signing out...'} do %>
+                <strong>Sign out</strong>
+            </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+      <hr class="navbar-divider">
+    </nav>
+    <section class="hero has-background-light is-fullheight-with-navbar">
+      <div class="hero-head">
+      </div>
+      <div class="hero-body is-align-items-start">
+        <%= yield %>
+      </div>
+      <div class="hero-foot">
+      </div>
+    </section>
+  </body>
+</html>

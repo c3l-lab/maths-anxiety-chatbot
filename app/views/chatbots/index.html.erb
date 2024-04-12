@@ -1,0 +1,17 @@
+<p style="color: green"><%= notice %></p>
+<h1>Chatbots</h1>
+<div id="chatbots">
+  <% @chatbots.each do |chatbot| %>
+    <%= render chatbot %>
+    <p>
+      <%= link_to "Show this chatbot", chatbot %>
+    </p>
+  <% end %>
+</div>
+<%= link_to "New chatbot", new_chatbot_path %>
+<% if user_signed_in? %>
+  <%= button_to destroy_user_session_path, method: :delete, class: "button is-link",
+      data: { 'turbo-submits-with': 'Signing out...'} do %>
+    <strong>Sign out</strong>
+  <% end %>
+<% end %>
