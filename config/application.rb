@@ -16,6 +16,9 @@ module MathsAnxietyChatbot
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w(assets tasks))
 
+    # We are using SQLite3 in production, so we need to disable the warning
+    config.active_record.sqlite3_production_warning=false
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
