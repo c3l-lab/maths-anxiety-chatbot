@@ -18,4 +18,9 @@ class Chatbot < ApplicationRecord
       end
     end
   end
+
+  # Have we started a conversation with this chatbot?
+  def started?
+    conversation_started_at.present?
+  end
 end

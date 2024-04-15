@@ -20,16 +20,20 @@
             </tr>
           </thead>
           <tbody>
-            <% @chatbots.each do |chatbot_history| %>
+            <% @chatbots.each do |c| %>
               <tr>
-                <td><%= chatbot_history.participant_id %></td>
-                <td><%= chatbot_history.chatbot_type %></td>
-                <td><%= chatbot_history.conversation_started_at %></td>
-                <td><%= chatbot_history.conversation_finished_at %></td>
-                <td><%= button_to "Delete",
-                  chatbot_path(chatbot_history),
-                  method: :delete,
-                  class: "button is-small is-danger is-light" %>
+                <td><%= c.participant_id %></td>
+                <td><%= c.chatbot_type %></td>
+                <td><%= local_time(c.conversation_started_at) unless c.conversation_started_at.blank? %></td>
+                <td><%= local_time(c.conversation_finished_at) unless c.conversation_finished_at.blank? %></td>
+                <td>
+                  <div class="is-flex flex-direction-row">
+                    <%= link_to "Chat", edit_chatbot_path(c), class: "button is-small is-light mr-3" %>
+                    <%= button_to "Delete",
+                    chatbot_path(c),
+                    method: :delete,
+                    class: "button is-small is-danger is-light" %>
+                  </div>
                 </td>
               </tr>
             <% end %>

@@ -85,3 +85,6 @@ end
 
 # Devise for user auth
 gem 'devise'
+
+# For displaying times in the user's timezone
+gem 'local_time'

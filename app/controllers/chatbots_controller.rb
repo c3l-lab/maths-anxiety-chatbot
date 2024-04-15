@@ -2,7 +2,7 @@
 
 class ChatbotsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_chatbot, only: %i[show edit update destroy]
+  before_action :set_chatbot, only: %i[show edit start update destroy]
 
   # GET /chatbots or /chatbots.json
   def index
@@ -21,6 +21,11 @@ class ChatbotsController < ApplicationController
   # GET /chatbots/new
   def new
     @chatbot = Chatbot.new
+  end
+
+  def start
+    @chatbot.update!(conversation_started_at: DateTime.now)
+    redirect_to chatbot_url(@chatbot)
   end
 
   # GET /chatbots/1/edit
