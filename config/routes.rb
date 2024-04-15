@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   patch 'chatbots/:id/finish', to: 'chatbots#finish', as: :finish_chatbot
   patch 'chatbots/:id/yes', to: 'chatbots#yes', as: :send_yes
   patch 'chatbots/:id/no', to: 'chatbots#no', as: :send_no
+  patch 'chatbots/:id/hear_more', to: 'chatbots#hear_more', as: :send_hear_more
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

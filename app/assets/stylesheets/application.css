@@ -18,3 +18,16 @@
   /* Add a simple border to the bottom of the navbar */
   border-bottom: solid 1px lightgray;
 }
+
+.notification {
+  /* Make our chat messages look like what you'd expect */
+  width: fit-content;
+  padding: 10px;
+	max-width: 60%;
+}
+
+.conversation-container {
+  height: 50vh;
+	overflow-y: scroll;
+	padding-right: 20px;
+}

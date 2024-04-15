@@ -1,30 +1,49 @@
 <%= render "start_modal", chatbot: @chatbot %>
-<%= button_to "Finish Test",
-finish_chatbot_path(@chatbot),
-method: :patch,
-class: "button is-link",
-form: {
-  data: {
-    turbo_confirm: "Are you sure you want to finish your test?",
-  },
-} %>
-<p>
-  <%= @chatbot.conversation %>
-</p>
-<%= button_to "Yes",
-send_yes_path(@chatbot),
-method: :patch,
-class: "button is-light is-link" %>
-<%= button_to "No",
-send_no_path(@chatbot),
-method: :patch,
-class: "button is-light is-link" %>
-<!--
-<br>
-
-<div>
-  <%= link_to "Show this chatbot", @chatbot %>
-  |
-  <%= link_to "Back to chatbots", chatbots_path %>
+<div class="box">
+  <div class="conversation-container" data-controller="conversation">
+    <% for message in @chatbot.conversation %>
+      <% if message["from"] == "chatbot" %>
+        <div class="is-flex is-justify-content-start mb-3">
+          <div class="notification">
+            <%= message["message"] %>
+          </div>
+        </div>
+      <% elsif message["from"] == "user" %>
+        <div class="is-flex is-justify-content-end mb-3">
+          <div class="notification is-link is-light">
+            <%= message["message"] %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  <hr/>
+  <div class="is-flex flex-direction-row is-justify-content-space-between">
+    <%= button_to "Finish Test",
+    finish_chatbot_path(@chatbot),
+    method: :patch,
+    class: "button is-link",
+    form: {
+      data: {
+        turbo_confirm: "Are you sure you want to finish your test?",
+      },
+    } %>
+    <div class="is-flex flex-direction-row">
+      <% if @chatbot.conversation.last["message"] == Chatbot::NO_RESPONSE %>
+        <%= button_to "I'd like to hear more",
+        send_hear_more_path(@chatbot),
+        method: :patch,
+        class: "button is-primary" %>
+      <% else %>
+        <%= button_to "Yes",
+        send_yes_path(@chatbot),
+        method: :patch,
+        class: "button is-primary mr-3" %>
+        <%= button_to "No",
+        send_no_path(@chatbot),
+        method: :patch,
+        class: "button is-primary" %>
+      <% end %>
+    </div>
+  </div>
 </div>
--->

@@ -2,7 +2,7 @@
 
 class ChatbotsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_chatbot, only: %i[show edit start finish yes no update destroy]
+  before_action :set_chatbot, only: %i[show edit start finish yes no hear_more update destroy]
 
   # GET /chatbots or /chatbots.json
   def index
@@ -36,19 +36,19 @@ class ChatbotsController < ApplicationController
 
   # PATCH /chatbots/1/yes
   def yes
-    @chatbot.conversation << { message: 'Yes', from: 'user' }
-    @chatbot.conversation << { message: @chatbot.next_message, from: 'chatbot' }
-    @chatbot.save!
-    sleep 0.1
+    @chatbot.yes
     redirect_to edit_chatbot_url(@chatbot)
   end
 
   # PATCH /chatbots/1/no
   def no
-    @chatbot.conversation << { message: 'No', from: 'user' }
-    @chatbot.conversation << { message: Chatbot::NO_RESPONSE, from: 'chatbot' }
-    @chatbot.save!
-    sleep 0.1
+    @chatbot.no
+    redirect_to edit_chatbot_url(@chatbot)
+  end
+
+  # PATCH /chatbots/1/hear_more
+  def hear_more
+    @chatbot.hear_more
     redirect_to edit_chatbot_url(@chatbot)
   end
 
@@ -58,6 +58,7 @@ class ChatbotsController < ApplicationController
   # POST /chatbots or /chatbots.json
   def create
     @chatbot = Chatbot.new(chatbot_params)
+    @chatbot.conversation = []
 
     respond_to do |format|
       if @chatbot.save
