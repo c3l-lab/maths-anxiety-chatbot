@@ -2,7 +2,7 @@
 
 class ChatbotsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_chatbot, only: %i[show edit start finish update destroy]
+  before_action :set_chatbot, only: %i[show edit start finish yes no update destroy]
 
   # GET /chatbots or /chatbots.json
   def index
@@ -24,13 +24,32 @@ class ChatbotsController < ApplicationController
   end
 
   def start
-    @chatbot.update!(conversation_started_at: DateTime.now)
+    @chatbot.start
     redirect_to edit_chatbot_url(@chatbot)
   end
 
   def finish
     @chatbot.update!(conversation_finished_at: DateTime.now)
-    redirect_to chatbots_url
+    sign_out
+    redirect_to new_user_session_path
+  end
+
+  # PATCH /chatbots/1/yes
+  def yes
+    @chatbot.conversation << { message: 'Yes', from: 'user' }
+    @chatbot.conversation << { message: @chatbot.next_message, from: 'chatbot' }
+    @chatbot.save!
+    sleep 0.1
+    redirect_to edit_chatbot_url(@chatbot)
+  end
+
+  # PATCH /chatbots/1/no
+  def no
+    @chatbot.conversation << { message: 'No', from: 'user' }
+    @chatbot.conversation << { message: Chatbot::NO_RESPONSE, from: 'chatbot' }
+    @chatbot.save!
+    sleep 0.1
+    redirect_to edit_chatbot_url(@chatbot)
   end
 
   # GET /chatbots/1/edit

@@ -8,6 +8,17 @@ form: {
     turbo_confirm: "Are you sure you want to finish your test?",
   },
 } %>
+<p>
+  <%= @chatbot.conversation %>
+</p>
+<%= button_to "Yes",
+send_yes_path(@chatbot),
+method: :patch,
+class: "button is-light is-link" %>
+<%= button_to "No",
+send_no_path(@chatbot),
+method: :patch,
+class: "button is-light is-link" %>
 <!--
 <br>
 
