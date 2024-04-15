@@ -8,38 +8,36 @@
     <% if @chatbots.empty? %>
       <p><em>No chatbots available.</em></p>
     <% else %>
-      <div class="table-container">
-        <table class="table is-bordered">
-          <thead>
+      <table class="table is-bordered">
+        <thead>
+          <tr>
+            <th>Participant ID</th>
+            <th>Chatbot Type</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @chatbots.each do |c| %>
             <tr>
-              <th>Participant ID</th>
-              <th>Chatbot Type</th>
-              <th>Started</th>
-              <th>Finished</th>
-              <th></th>
+              <td><%= c.participant_id %></td>
+              <td><%= c.chatbot_type %></td>
+              <td><%= local_time(c.conversation_started_at) unless c.conversation_started_at.blank? %></td>
+              <td><%= local_time(c.conversation_finished_at) unless c.conversation_finished_at.blank? %></td>
+              <td>
+                <div class="is-flex flex-direction-row">
+                  <%= link_to "Chat", edit_chatbot_path(c), class: "button is-small is-light mr-3" %>
+                  <%= button_to "Delete",
+                  chatbot_path(c),
+                  method: :delete,
+                  class: "button is-small is-danger is-light" %>
+                </div>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            <% @chatbots.each do |c| %>
-              <tr>
-                <td><%= c.participant_id %></td>
-                <td><%= c.chatbot_type %></td>
-                <td><%= local_time(c.conversation_started_at) unless c.conversation_started_at.blank? %></td>
-                <td><%= local_time(c.conversation_finished_at) unless c.conversation_finished_at.blank? %></td>
-                <td>
-                  <div class="is-flex flex-direction-row">
-                    <%= link_to "Chat", edit_chatbot_path(c), class: "button is-small is-light mr-3" %>
-                    <%= button_to "Delete",
-                    chatbot_path(c),
-                    method: :delete,
-                    class: "button is-small is-danger is-light" %>
-                  </div>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+          <% end %>
+        </tbody>
+      </table>
       <%= link_to "Export", chatbots_path(format: "csv"), class: "button is-link" %>
     <% end %>
   </div>

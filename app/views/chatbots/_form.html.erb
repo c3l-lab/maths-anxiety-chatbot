@@ -13,7 +13,10 @@
   <div class="field">
     <%= form.label :participant_id, "Participant ID", class: "label" %>
     <div class="control">
-      <%= form.text_field :participant_id, class: "input", style: "width:200px" %>
+      <%= form.text_field :participant_id,
+                      class: "input",
+                      style: "width:200px",
+                      required: true %>
     </div>
   </div>
   <div class="field">

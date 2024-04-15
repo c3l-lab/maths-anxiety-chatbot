@@ -1,0 +1,28 @@
+<div class="modal <%= chatbot.started? ? '' : 'is-active' %>">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <div class="box">
+      <div class="content">
+        <p>
+          <strong>
+            Participant ID:
+          </strong>
+          <%= chatbot.participant_id %>
+        </p>
+        <p>
+          Please click "Start Test" once you have begun your math test.
+        </p>
+        <p>
+          Do not start until you have finished filling out your Qualtrics
+          demographics survey.
+        </p>
+      </div>
+      <div class="is-flex is-justify-content-center">
+        <%= button_to "Start Test",
+        start_chatbot_path(chatbot),
+        method: :patch,
+        class: "button is-light is-success" %>
+      </div>
+    </div>
+  </div>
+</div>

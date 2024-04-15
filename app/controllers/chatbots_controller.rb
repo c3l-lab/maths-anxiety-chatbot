@@ -2,7 +2,7 @@
 
 class ChatbotsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_chatbot, only: %i[show edit start update destroy]
+  before_action :set_chatbot, only: %i[show edit start finish update destroy]
 
   # GET /chatbots or /chatbots.json
   def index
@@ -25,7 +25,12 @@ class ChatbotsController < ApplicationController
 
   def start
     @chatbot.update!(conversation_started_at: DateTime.now)
-    redirect_to chatbot_url(@chatbot)
+    redirect_to edit_chatbot_url(@chatbot)
+  end
+
+  def finish
+    @chatbot.update!(conversation_finished_at: DateTime.now)
+    redirect_to chatbots_url
   end
 
   # GET /chatbots/1/edit
@@ -38,7 +43,7 @@ class ChatbotsController < ApplicationController
     respond_to do |format|
       if @chatbot.save
         # format.html { redirect_to chatbot_url(@chatbot), notice: 'Chatbot was successfully created.' }
-        format.html { redirect_to chatbots_url }
+        format.html { redirect_to edit_chatbot_url(@chatbot) }
         format.json { render :show, status: :created, location: @chatbot }
       else
         format.html { render :index, status: :unprocessable_entity }
