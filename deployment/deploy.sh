@@ -2,8 +2,7 @@
 
 ####################################################################
 #
-# This script deploys the maths-anxiety-chatbot django app to an EC2
-# instance.
+# This script deploys the maths-anxiety-chatbot app to an EC2 instance.
 #
 ####################################################################
 
@@ -17,25 +16,17 @@ fi
 
 # Check that all our environment variables are set
 for var in SSH_KEY_FILE \
+	RAILS_MASTER_KEY \
 	DOMAIN \
-	DJANGO_SUPERUSER_USERNAME \
-	DJANGO_SUPERUSER_EMAIL \
-	DJANGO_SUPERUSER_PASSWORD \
-	DJANGO_SECRET_KEY \
-	DEPLOY_BRANCH \
-	DJANGO_SETTINGS_MODULE; do
+	DEPLOY_BRANCH; do
 	if [ -z "${!var}" ]; then
 		echo "Error: The $var environment variable is not set."
 		echo ""
 		echo "The following environment variables must be set:"
 		echo "  SSH_KEY_FILE: The path to the SSH key .pem file that has access to the server, these .pem files can be found in AWS Secrets Manager"
+		echo "  RAILS_MASTER_KEY: The Rails master key to use for decryption"
 		echo "  DOMAIN: The domain name of the server (chatty.c3l.ai)"
-		echo "  DJANGO_SUPERUSER_USERNAME: The username of the superuser (lab.manager)"
-		echo "  DJANGO_SUPERUSER_EMAIL: The email of the superuser (lab.manager@c3l.ai)"
-		echo "  DJANGO_SUPERUSER_PASSWORD: The password of the superuser"
-		echo "  DJANGO_SECRET_KEY: The secret key used by Django for crypto hashing and signing"
 		echo "  DEPLOY_BRANCH: The branch to deploy (main)"
-		echo "  DJANGO_SETTINGS_MODULE: The Django settings module to use (anxiety_chatbot_project.settings-production)"
 		exit 1
 	fi
 done
@@ -44,24 +35,34 @@ done
 tee tmp.sh <<EOF_SERVER
 cd ~/maths-anxiety-chatbot
 git fetch
-git pull origin "$DEPLOY_BRANCH"
+git pull origin "${DEPLOY_BRANCH}"
 
 # Set the secret key and environment variables
-echo "$DJANGO_SECRET_KEY" >./secret_key.txt
-export DJANGO_SUPERUSER_USERNAME="$DJANGO_SUPERUSER_USERNAME"
-export DJANGO_SUPERUSER_EMAIL="$DJANGO_SUPERUSER_EMAIL"
-export DJANGO_SUPERUSER_PASSWORD="$DJANGO_SUPERUSER_PASSWORD"
-export DJANGO_SETTINGS_MODULE="$DJANGO_SETTINGS_MODULE"
+echo "${RAILS_MASTER_KEY}" > config/master.key
 
-# Setup ubuntu packages
+# Update things
 sudo apt update
-sudo apt install pipx nginx python3.11 -y
 
-# Install pipx and poetry
-pipx install poetry
-pipx ensurepath
-. "/home/ubuntu/.bashrc" # Load the new PATH
-poetry install
+# Install ruby 3.2.3
+brew install ruby@3.2
+
+# Setup the rails app
+/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle config set --local deployment 'true'
+/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle config set --local without 'development test'
+/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle install
+/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle exec rake assets:precompile db:migrate RAILS_ENV=production
+
+# Install Passenger
+# https://www.phusionpassenger.com/docs/advanced_guides/install_and_upgrade/standalone/install/oss/jammy.html
+sudo apt-get install -y dirmngr gnupg apt-transport-https ca-certificates curl
+curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null
+sudo sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger jammy main > /etc/apt/sources.list.d/passenger.list'
+sudo apt-get update
+sudo apt-get install -y passenger libnginx-mod-http-passenger
+sudo /usr/bin/passenger-config validate-install --auto
+
+# Install and setup Nginx
+sudo apt install nginx -y
 
 # Install certbot and get some LetsEncrypt certificates
 sudo snap install core && sudo snap refresh core
@@ -73,87 +74,37 @@ sudo certbot certonly --nginx -m tbarone@comunet.com.au --agree-tos --non-intera
 # Certificate is saved at: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
 # Key is saved at:         /etc/letsencrypt/live/${DOMAIN}/privkey.pem
 
-# Setup Nginx and Supervisor
-# Using instructions from https://channels.readthedocs.io/en/latest/deploying.html
 sudo tee /etc/nginx/sites-available/maths-anxiety-chatbot <<EOF
-upstream channels-backend {
-		server localhost:8000;
-}
 server {
     listen 80;
-    location / {  
-        proxy_pass http://127.0.0.1:8000/; 
-				proxy_redirect off;
-				proxy_http_version 1.1;
-				proxy_set_header Upgrade \\\$http_upgrade;
-				proxy_set_header Connection "upgrade";
-				proxy_set_header Host \\\$host;
-    }
-		location = /favicon.ico { access_log off; log_not_found off; }
-		location /static/ {
-				root /home/ubuntu/maths-anxiety-chatbot/static/;
-		}
+    server_name ${DOMAIN};
+
+    # Tell Nginx and Passenger where your app's 'public' directory is
+    root /home/ubuntu/maths-anxiety-chatbot/public;
+
+    # Turn on Passenger
+    passenger_enabled on;
+    passenger_ruby /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/ruby;
 }
 server {
     listen 443 ssl;
+    server_name ${DOMAIN};
 		ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
 		ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
-    location / { 
-        proxy_pass http://127.0.0.1:8000/;
-				proxy_redirect off;
-				proxy_http_version 1.1;
-				proxy_set_header Upgrade \\\$http_upgrade;
-				proxy_set_header Connection "upgrade";
-				proxy_set_header Host \\\$host;
-    }
-		location = /favicon.ico { access_log off; log_not_found off; }
-		location /static/ {
-				root /home/ubuntu/maths-anxiety-chatbot;
-		}
+
+    # Tell Nginx and Passenger where your app's 'public' directory is
+    root /home/ubuntu/maths-anxiety-chatbot/public;
+
+    # Turn on Passenger
+    passenger_enabled on;
+    passenger_ruby /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/ruby;
 }
 EOF
 sudo sed -i "/user www-data;/c\\user ubuntu;" /etc/nginx/nginx.conf # Change the user to ubuntu
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo rm -f /etc/nginx/sites-enabled/maths-anxiety-chatbot
 sudo ln -s /etc/nginx/sites-available/maths-anxiety-chatbot /etc/nginx/sites-enabled/
-sudo systemctl restart nginx
-
-# Setup the Django static files
-sudo rm -rf ./static
-poetry run python manage.py collectstatic --noinput
-
-# Run the Django migrations
-poetry run python manage.py migrate
-
-# Setup the systemd service
-sudo tee /etc/systemd/system/maths-anxiety-chatbot.service <<EOF
-# This is a systemd service to manage and auto start the Django app
-
-[Unit]
-Description=Maths Anxiety Chatbot Django App
-# Make sure there's no restart limit
-# https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6
-StartLimitIntervalSec=0
-
-[Service]
-Type=simple
-Restart=always
-RestartSec=60
-User=ubuntu
-Group=ubuntu
-Environment="DJANGO_LOG_LEVEL=debug"
-Environment="DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}"
-WorkingDirectory=/home/ubuntu/maths-anxiety-chatbot
-ExecStart=/home/ubuntu/.local/bin/poetry run daphne anxiety_chatbot_project.asgi:application
-
-[Install]
-WantedBy=multi-user.target
-EOF
-sudo systemctl enable maths-anxiety-chatbot # Enable the service to start on boot
-sudo systemctl restart maths-anxiety-chatbot
-
-# Create the superuser
-poetry run python manage.py createsuperuser --no-input || true
+sudo service nginx restart
 
 echo 'Deployment successfully completed.'
 

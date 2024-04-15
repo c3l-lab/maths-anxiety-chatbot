@@ -88,3 +88,6 @@ gem 'devise'
 
 # For displaying times in the user's timezone
 gem 'local_time'
+
+# Fix error with passenger
+gem "base64", "0.1.1" 
