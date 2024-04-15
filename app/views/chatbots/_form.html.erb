@@ -11,24 +11,12 @@
     </div>
   <% end %>
   <div>
-    <%= form.label :participant_id, style: "display: block" %>
+    <%= form.label :participant_id, "Participant ID", style: "display: block" %>
     <%= form.text_field :participant_id %>
   </div>
   <div>
     <%= form.label :chatbot_type, style: "display: block" %>
     <%= form.select :chatbot_type, Chatbot::CHATBOT_TYPES %>
-  </div>
-  <div>
-    <%= form.label :conversation, style: "display: block" %>
-    <%= form.text_field :conversation %>
-  </div>
-  <div>
-    <%= form.label :conversation_started_at, style: "display: block" %>
-    <%= form.datetime_field :conversation_started_at %>
-  </div>
-  <div>
-    <%= form.label :conversation_finished_at, style: "display: block" %>
-    <%= form.datetime_field :conversation_finished_at %>
   </div>
   <div>
     <%= form.submit %>

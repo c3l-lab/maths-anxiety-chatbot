@@ -1,17 +1,42 @@
-<p style="color: green"><%= notice %></p>
-<h1>Chatbots</h1>
-<div id="chatbots">
-  <% @chatbots.each do |chatbot| %>
-    <%= render chatbot %>
-    <p>
-      <%= link_to "Show this chatbot", chatbot %>
-    </p>
-  <% end %>
+<div class="columns">
+  <div class="column">
+    <h1 class="title is-4">Setup New Chatbot</h1>
+    <%= render "form", chatbot: @chatbot %>
+  </div>
+  <div class="column is-two-thirds">
+    <h1 class="title is-4">Chatbot History</h1>
+    <% if @chatbots.empty? %>
+      <p><em>No chatbots available.</em></p>
+    <% else %>
+      <div class="table-container">
+        <table class="table is-bordered">
+          <thead>
+            <tr>
+              <th>Participant ID</th>
+              <th>Chatbot Type</th>
+              <th>Started</th>
+              <th>Finished</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @chatbots.each do |chatbot_history| %>
+              <tr>
+                <td><%= chatbot_history.participant_id %></td>
+                <td><%= chatbot_history.chatbot_type %></td>
+                <td><%= chatbot_history.conversation_started_at %></td>
+                <td><%= chatbot_history.conversation_finished_at %></td>
+                <td><%= button_to "Delete",
+                  chatbot_path(chatbot_history),
+                  method: :delete,
+                  class: "button is-small is-danger is-light" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <%= link_to "Export", chatbots_path(format: "csv"), class: "button is-link" %>
+    <% end %>
+  </div>
 </div>
-<%= link_to "New chatbot", new_chatbot_path %>
-<% if user_signed_in? %>
-  <%= button_to destroy_user_session_path, method: :delete, class: "button is-link",
-      data: { 'turbo-submits-with': 'Signing out...'} do %>
-    <strong>Sign out</strong>
-  <% end %>
-<% end %>

@@ -7,6 +7,12 @@ class ChatbotsController < ApplicationController
   # GET /chatbots or /chatbots.json
   def index
     @chatbots = Chatbot.all
+    @chatbot = Chatbot.new
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Chatbot.to_csv, filename: "chatbots-#{DateTime.now.strftime('%d%m%Y%H%M')}.csv" }
+    end
   end
 
   # GET /chatbots/1 or /chatbots/1.json
@@ -26,10 +32,11 @@ class ChatbotsController < ApplicationController
 
     respond_to do |format|
       if @chatbot.save
-        format.html { redirect_to chatbot_url(@chatbot), notice: 'Chatbot was successfully created.' }
+        # format.html { redirect_to chatbot_url(@chatbot), notice: 'Chatbot was successfully created.' }
+        format.html { redirect_to chatbots_url }
         format.json { render :show, status: :created, location: @chatbot }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :index, status: :unprocessable_entity }
         format.json { render json: @chatbot.errors, status: :unprocessable_entity }
       end
     end
