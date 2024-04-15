@@ -44,13 +44,15 @@ echo "${RAILS_MASTER_KEY}" > config/master.key
 sudo apt update
 
 # Install ruby 3.2.3
-brew install ruby@3.2
+/home/linuxbrew/.linuxbrew/bin/brew install ruby@3.2
 
 # Setup the rails app
 /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle config set --local deployment 'true'
 /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle config set --local without 'development test'
 /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle install
 /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle exec rake assets:precompile db:migrate RAILS_ENV=production
+# Add the default user
+/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle exec rake db:seed
 
 # Install Passenger
 # https://www.phusionpassenger.com/docs/advanced_guides/install_and_upgrade/standalone/install/oss/jammy.html

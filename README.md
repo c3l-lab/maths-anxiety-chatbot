@@ -56,6 +56,7 @@ below are for the production instance.
    - `export NON_INTERACTIVE="true"`
    - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
    - `(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/ubuntu/.bashrc`
+   - `echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin:$PATH"' >> /home/ubuntu/.bashrc`
 10. It's a good idea to install the latest updates on the EC2 instance.
    - `sudo apt update`
    - `sudo apt upgrade -y`

@@ -21,6 +21,13 @@ class Chatbot < ApplicationRecord
     end
   end
 
+  def waiting?
+    if conversation == nil || conversation.empty?
+      return false
+    end
+    conversation.last["message"] == NO_RESPONSE
+  end
+
   def start
     update!(conversation_started_at: DateTime.now)
     conversation = []

@@ -19,15 +19,15 @@
   border-bottom: solid 1px lightgray;
 }
 
-.notification {
+.chat-message {
   /* Make our chat messages look like what you'd expect */
   width: fit-content;
   padding: 10px;
-	max-width: 60%;
+  max-width: 60%;
 }
 
 .conversation-container {
   height: 50vh;
-	overflow-y: scroll;
-	padding-right: 20px;
+  overflow-y: scroll;
+  padding-right: 20px;
 }

@@ -4,13 +4,13 @@
     <% for message in @chatbot.conversation %>
       <% if message["from"] == "chatbot" %>
         <div class="is-flex is-justify-content-start mb-3">
-          <div class="notification">
+          <div class="chat-message notification">
             <%= message["message"] %>
           </div>
         </div>
       <% elsif message["from"] == "user" %>
         <div class="is-flex is-justify-content-end mb-3">
-          <div class="notification is-link is-light">
+          <div class="chat-message notification is-link is-light">
             <%= message["message"] %>
           </div>
         </div>
@@ -29,7 +29,7 @@
       },
     } %>
     <div class="is-flex flex-direction-row">
-      <% if @chatbot.conversation.last["message"] == Chatbot::NO_RESPONSE %>
+      <% if @chatbot.waiting? %>
         <%= button_to "I'd like to hear more",
         send_hear_more_path(@chatbot),
         method: :patch,
