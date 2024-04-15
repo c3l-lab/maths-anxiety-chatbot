@@ -37,7 +37,7 @@ cd ~/maths-anxiety-chatbot
 git fetch
 git pull origin "${DEPLOY_BRANCH}"
 
-# Set the secret key and environment variables
+# Set the secret key
 echo "${RAILS_MASTER_KEY}" > config/master.key
 
 # Update things
@@ -50,7 +50,7 @@ sudo apt update
 /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle config set --local deployment 'true'
 /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle config set --local without 'development test'
 /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle install
-/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle exec rake assets:precompile db:migrate RAILS_ENV=production
+/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle exec rake assets:precompile db:migrate db:seed RAILS_ENV=production
 # Add the default user
 /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle exec rake db:seed
 

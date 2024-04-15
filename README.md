@@ -53,7 +53,7 @@ below are for the production instance.
    - `ssh-add ~/.ssh/id_ed25519`
    - `git clone git@github.com:c3l-lab/maths-anxiety-chatbot.git`
 9. Install [Homebrew](https://brew.sh/) so we can install Ruby
-   - `export NON_INTERACTIVE="true"`
+   - `export NONINTERACTIVE="true"`
    - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
    - `(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/ubuntu/.bashrc`
    - `echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin:$PATH"' >> /home/ubuntu/.bashrc`

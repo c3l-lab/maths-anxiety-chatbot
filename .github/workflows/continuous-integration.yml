@@ -7,11 +7,7 @@ jobs:
   deploy_uat:
     runs-on: "ubuntu-22.04"
     env:
-      DJANGO_SUPERUSER_USERNAME: "lab.manager"
-      DJANGO_SUPERUSER_EMAIL: "lab.manager@c3l.ai"
-      DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
-      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY_UAT }}
-      DJANGO_SETTINGS_MODULE: "anxiety_chatbot_project.settings-uat"
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
       DOMAIN: "chatty-uat.c3l.ai"
       SSH_KEY_FILE: "/tmp/key.pem"
       DEPLOY_BRANCH: "dev"
