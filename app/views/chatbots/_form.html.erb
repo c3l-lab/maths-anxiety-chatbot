@@ -10,15 +10,21 @@
       </ul>
     </div>
   <% end %>
-  <div>
-    <%= form.label :participant_id, "Participant ID", style: "display: block" %>
-    <%= form.text_field :participant_id %>
+  <div class="field">
+    <%= form.label :participant_id, "Participant ID", class: "label" %>
+    <div class="control">
+      <%= form.text_field :participant_id, class: "input", style: "width:200px" %>
+    </div>
   </div>
-  <div>
-    <%= form.label :chatbot_type, style: "display: block" %>
-    <%= form.select :chatbot_type, Chatbot::CHATBOT_TYPES %>
+  <div class="field">
+    <%= form.label :chatbot_type, class: "label" %>
+    <div class="control">
+      <div class="select">
+        <%= form.select :chatbot_type, Chatbot::CHATBOT_TYPES %>
+      </div>
+    </div>
   </div>
-  <div>
-    <%= form.submit %>
+  <div class="control">
+    <%= form.button "Create", type: :submit, class: "button is-link" %>
   </div>
 <% end %>
