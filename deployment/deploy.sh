@@ -42,6 +42,7 @@ echo "${RAILS_MASTER_KEY}" > config/master.key
 
 # Update things
 sudo apt update
+sudo apt install build-essential -y
 
 # Install ruby 3.2.3
 /home/linuxbrew/.linuxbrew/bin/brew install ruby@3.2
