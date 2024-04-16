@@ -10,22 +10,34 @@ class Chatbot < ApplicationRecord
     excluded_columns = %w[created_at updated_at]
     output_columns = column_names - excluded_columns
     CSV.generate do |csv|
-      csv << output_columns.map do |header|
+      # Setup the header row
+      header_row = output_columns.map do |header|
         # Make the column names a bit more user-friendly
         case header when 'id' then 'database_id' when 'conversation' then 'conversation (JSON)' else header end
       end
+      header_row << 'Number of strategies / comments requested'
+      csv << header_row
 
       chatbots.each do |chatbot|
-        csv << chatbot.attributes.values_at(*output_columns)
+        value_row = chatbot.attributes.values_at(*output_columns)
+        value_row << chatbot.number_of_strategies_requested
+        csv << value_row
       end
     end
   end
 
-  def waiting?
-    if conversation == nil || conversation.empty?
-      return false
+  def number_of_strategies_requested
+    return 0 if conversation.blank?
+
+    conversation.count do |message|
+      message['from'] == 'user' && (message['message'] == 'Yes' || message['message'] == USER_HEAR_MORE)
     end
-    conversation.last["message"] == NO_RESPONSE
+  end
+
+  def waiting?
+    return false if conversation.blank?
+
+    conversation.last['message'] == NO_RESPONSE
   end
 
   def start
@@ -63,7 +75,7 @@ class Chatbot < ApplicationRecord
   end
 
   def hear_more
-    conversation << { message: "I'd like to hear more", from: 'user' }
+    conversation << { message: USER_HEAR_MORE, from: 'user' }
     conversation << { message: next_message, from: 'chatbot' }
     prompt = if chatbot_type == 'Group A - Helpful Chatbot'
                HELPFUL_PROMPT
@@ -118,4 +130,6 @@ class Chatbot < ApplicationRecord
     'There are many moving parts involved in creating a research study. These moving parts help ensure that the study runs smoothly and safely for each participant.',
     'Thanks for taking part in our study today!'
   ].freeze
+
+  USER_HEAR_MORE = "I'd like to hear more"
 end

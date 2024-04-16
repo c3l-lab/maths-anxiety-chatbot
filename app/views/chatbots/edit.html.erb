@@ -30,7 +30,7 @@
     } %>
     <div class="is-flex flex-direction-row">
       <% if @chatbot.waiting? %>
-        <%= button_to "I'd like to hear more",
+        <%= button_to Chatbot::USER_HEAR_MORE,
         send_hear_more_path(@chatbot),
         method: :patch,
         class: "button is-primary" %>
