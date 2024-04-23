@@ -29,7 +29,10 @@
       },
     } %>
     <div class="is-flex flex-direction-row">
-      <% if @chatbot.waiting? %>
+      <% if @chatbot.out_of_responses? %>
+        <!-- Don't show anything -->
+        <div/>
+      <% elsif @chatbot.waiting? %>
         <%= button_to Chatbot::USER_HEAR_MORE,
         send_hear_more_path(@chatbot),
         method: :patch,
