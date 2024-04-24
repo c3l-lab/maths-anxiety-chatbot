@@ -1,7 +1,20 @@
-# Deployment
+# Maths Anxiety Chatbot (Chatty)
 
-This rails application is deployed on a small `t2.micro` EC2 instance on AWS.
-Since it's such a simple application, we'll just use a local
+## Overview
+
+This is a simple web based chatbot that was designed to be used for a research
+study into mathematics anxiety.
+
+## Contacts
+
+- Tom Barone - Lead Developer, tbarone@comunet.com.au (Comunet)
+- Leon Kimani - Developer, kimly013@mymail.unisa.edu.au (C3L)
+- Dr Rebecca Marrone - Research Lead, Rebecca.Marrone@unisa.edu.au (C3L)
+
+## Technical
+
+This is a Ruby on Rails application that is deployed on a small `t2.micro` EC2
+instance on AWS. Since it's such a simple application, we'll just use a local
 [`sqlite3`](https://www.sqlite.org/) database on the instance for storage.
 
 We have 2 EC2 instances:
@@ -15,10 +28,28 @@ We have 2 EC2 instances:
    - Deployed on every push to the `dev` branch using GitHub Actions
    - Deployed to the `C3L-LIFT-DEV` account
 
+### Development
+
+Create a new `config/master.key` file so that the encrypted credentials can be
+decrypted. The contents of this file are stored in AWS Secrets Manager in
+`C3L-LIFT-PROD`.
+
+Make sure the correct version of ruby is installed on your machine.
+
+To setup a local development environment, run:
+
+```bash
+rails db:migrate
+rails db:seed
+rails server
+```
+
+For more information, see the [Rails Guides](https://guides.rubyonrails.org)
+
 ### EC2 Instance Setup
 
-To setup an EC2 instance, follow these steps in the AWS console. The examples
-below are for the production instance.
+To setup a new EC2 instance to host the app, follow these steps in the AWS
+console. The examples below are for the production instance.
 
 1. Create a new EC2 instance:
    - Name: `maths-anxiety-chatbot-prod`
@@ -57,7 +88,10 @@ below are for the production instance.
    - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
    - `(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/ubuntu/.bashrc`
    - `/home/linuxbrew/.linuxbrew/bin/brew install ruby@3.2`
+     - This will take a while
    - `echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin:$PATH"' >> /home/ubuntu/.bashrc`
 10. It's a good idea to install the latest updates on the EC2 instance.
-   - `sudo apt update`
+
+- `sudo apt update`
+
 11. Reboot the EC2 instance.

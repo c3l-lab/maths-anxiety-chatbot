@@ -27,6 +27,7 @@
 }
 
 .conversation-container {
+	/* Make our conversation container scrollable and roughly half the height of the screen */
   height: 50vh;
   overflow-y: scroll;
   padding-right: 20px;
