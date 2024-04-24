@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="navbar-menu">
-        <%# This is a bit of a hack to avoid showing the on the chatbot conversation page %>
+        <%# This is a bit of a hack to avoid showing these navigation links on the on the chatbot conversation page %>
         <% if !request.path.include?("/chatbot/") && !request.path.include?("/edit") %>
           <% if user_signed_in? %>
             <div class="navbar-start">
