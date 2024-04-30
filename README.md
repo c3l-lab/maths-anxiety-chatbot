@@ -87,7 +87,7 @@ console. The examples below are for the production instance.
    - `export NONINTERACTIVE="true"`
    - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
    - `(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/ubuntu/.bashrc`
-   - `/home/linuxbrew/.linuxbrew/bin/brew install rbenv ruby-build openssl@3 readline libyaml`
+   - `/home/linuxbrew/.linuxbrew/bin/brew install rbenv ruby-build openssl@3 readline libyaml zlib`
    - `echo 'eval "$(rbenv init - bash)"' >> /home/ubuntu/.bashrc`
    - `rbenv install 3.2.3`
    - `rbenv global 3.2.3`

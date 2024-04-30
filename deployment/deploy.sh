@@ -45,7 +45,7 @@ echo "${RAILS_MASTER_KEY}" > config/master.key
 
 # Update things
 sudo apt update
-sudo apt install build-essential -y
+sudo apt install -y build-essential zlib1g-dev zlib1g
 
 # Check that our ruby version is installed and is 3.2.3
 ${RUBY_INSTALL_PATH}/ruby --version | grep "ruby 3.2.3"
