@@ -38,7 +38,7 @@ tee tmp.sh <<EOF_SERVER
 set -e
 cd ~/maths-anxiety-chatbot
 git fetch
-git pull origin "${DEPLOY_BRANCH}"
+git reset --hard origin/"${DEPLOY_BRANCH}"
 
 # Set the secret key
 echo "${RAILS_MASTER_KEY}" > config/master.key
