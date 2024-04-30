@@ -54,7 +54,8 @@ ${RUBY_INSTALL_PATH}/ruby --version | grep "ruby 3.2.3"
 ${RUBY_INSTALL_PATH}/bundle config set --local deployment 'true'
 ${RUBY_INSTALL_PATH}/bundle config set --local without 'development test'
 ${RUBY_INSTALL_PATH}/bundle install
-${RUBY_INSTALL_PATH}/bundle exec rake assets:precompile db:migrate db:seed RAILS_ENV=production
+${RUBY_INSTALL_PATH}/bundle exec rake db:migrate RAILS_ENV=production
+${RUBY_INSTALL_PATH}/bundle exec rake assets:precompile db:seed RAILS_ENV=production
 # Add the default user
 ${RUBY_INSTALL_PATH}/bundle exec rake db:seed
 
