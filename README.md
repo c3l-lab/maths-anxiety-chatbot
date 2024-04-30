@@ -87,9 +87,12 @@ console. The examples below are for the production instance.
    - `export NONINTERACTIVE="true"`
    - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
    - `(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/ubuntu/.bashrc`
-   - `/home/linuxbrew/.linuxbrew/bin/brew install ruby@3.2`
-     - This will take a while
-   - `echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin:$PATH"' >> /home/ubuntu/.bashrc`
+   - `/home/linuxbrew/.linuxbrew/bin/brew install rbenv ruby-build openssl@3 readline libyaml`
+   - `echo 'eval "$(rbenv init - bash)"' >> /home/ubuntu/.bashrc`
+   - `rbenv install 3.2.3`
+   - `rbenv global 3.2.3`
+   - `which ruby`
+     - This should print out where the installed ruby is located
 10. It's a good idea to install the latest updates on the EC2 instance.
 
 - `sudo apt update`

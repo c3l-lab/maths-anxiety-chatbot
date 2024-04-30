@@ -31,8 +31,11 @@ for var in SSH_KEY_FILE \
 	fi
 done
 
+RUBY_INSTALL_PATH="/home/ubuntu/.rbenv/shims"
+
 # Create a temporary script that we'll then run on the web server
 tee tmp.sh <<EOF_SERVER
+set -e
 cd ~/maths-anxiety-chatbot
 git fetch
 git pull origin "${DEPLOY_BRANCH}"
@@ -44,16 +47,16 @@ echo "${RAILS_MASTER_KEY}" > config/master.key
 sudo apt update
 sudo apt install build-essential -y
 
-# Install ruby 3.2.3
-/home/linuxbrew/.linuxbrew/bin/brew install ruby@3.2
+# Check that our ruby version is installed and is 3.2.3
+${RUBY_INSTALL_PATH}/ruby --version | grep "ruby 3.2.3"
 
 # Setup the rails app
-/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle config set --local deployment 'true'
-/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle config set --local without 'development test'
-/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle install
-/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle exec rake assets:precompile db:migrate db:seed RAILS_ENV=production
+${RUBY_INSTALL_PATH}/bundle config set --local deployment 'true'
+${RUBY_INSTALL_PATH}/bundle config set --local without 'development test'
+${RUBY_INSTALL_PATH}/bundle install
+${RUBY_INSTALL_PATH}/bundle exec rake assets:precompile db:migrate db:seed RAILS_ENV=production
 # Add the default user
-/home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/bundle exec rake db:seed
+${RUBY_INSTALL_PATH}/bundle exec rake db:seed
 
 # Install Passenger
 # https://www.phusionpassenger.com/docs/advanced_guides/install_and_upgrade/standalone/install/oss/jammy.html
@@ -87,7 +90,7 @@ server {
 
     # Turn on Passenger
     passenger_enabled on;
-    passenger_ruby /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/ruby;
+    passenger_ruby ${RUBY_INSTALL_PATH}/ruby;
 }
 server {
     listen 443 ssl;
@@ -100,7 +103,7 @@ server {
 
     # Turn on Passenger
     passenger_enabled on;
-    passenger_ruby /home/linuxbrew/.linuxbrew/opt/ruby@3.2/bin/ruby;
+    passenger_ruby ${RUBY_INSTALL_PATH}/ruby;
 }
 EOF
 sudo sed -i "/user www-data;/c\\user ubuntu;" /etc/nginx/nginx.conf # Change the user to ubuntu
