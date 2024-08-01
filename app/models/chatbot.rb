@@ -121,12 +121,12 @@ class Chatbot < ApplicationRecord
   HELPFUL_WELCOME_2 = 'Would you like to hear a strategy for anxiety reduction?'
   HELPFUL_PROMPT = 'Would you like to hear another strategy?'
   HELPFUL_RESPONSES = [
-    'Research suggests that deep breathing can help reduce these feelings of stress or anxiety. Try slowly inhaling through your nose and exhaling through your mouth 10 times before returning to the exercise.',
-    'Research has shown us that by reframing our negative thoughts as positive thoughts, we can actually perform better. Try approaching the next question with the mindset that the question is challenging, rather than threatening, and that you have the ability to tackle it.',
-    'Research has demonstrated the impressive power of mental imagery. Try visualizing yourself solving the next problem. It may just give you the confidence boost you need to succeed.',
-    'Research has proven that a confidence boost can go a long way. Try starting with the questions you feel comfortable with, before moving on to tackling the ones you are feeling unsure about.',
-    'Research has proven that taking time for your body to relax or recharge can reduce anxiety and improve performance. Try taking a short break, standing up, or performing some stretches before returning to the exercise.',
-    "Research has indicated that when we're anxious we tend to focus on our negative experiences. However, focusing on positive experiences can remind us of our strengths. Try thinking of some examples of times you've had a successful or enjoyable interaction with math before returning to the exercise."
+    'Try slowly inhaling through your nose and exhaling through your mouth 10 times before returning to the exercise. Research suggests that deep breathing can help reduce these feelings of stress or anxiety.',
+    'Try approaching the next question with the mindset that the question is challenging, rather than threatening, and that you have the ability to tackle it. Research has shown us that by reframing our negative thoughts as positive thoughts, we can actually perform better.',
+    'Try visualizing yourself solving the next problem. It may just give you the confidence boost you need to succeed. Research has demonstrated the impressive power of mental imagery.',
+    'Try starting with the questions you feel comfortable with, before moving on to tackling the ones you are feeling unsure about. Research has proven that a confidence boost can go a long way.',
+    'Try taking a short break, standing up, or performing some stretches before returning to the exercise. Research has proven that taking time for your body to relax or recharge can reduce anxiety and improve performance.',
+    "Try thinking of some examples of times you've had a successful or enjoyable interaction with math before returning to the exercise. Research has indicated that when we're anxious we tend to focus on our negative experiences. However, focusing on positive experiences can remind us of our strengths."
   ].freeze
   HELPFUL_NO_MORE_RESPONSES = "I'm sorry, I don't have any more strategies to share with you."
 
