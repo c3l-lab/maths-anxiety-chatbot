@@ -44,7 +44,7 @@ git reset --hard origin/"${DEPLOY_BRANCH}"
 echo "${RAILS_MASTER_KEY}" > config/master.key
 
 # Update things
-sudo apt update
+sudo apt update --allow-releaseinfo-change
 sudo apt install -y build-essential zlib1g-dev zlib1g
 
 # Check that our ruby version is installed and is 3.2.3
@@ -64,7 +64,7 @@ ${RUBY_INSTALL_PATH}/bundle exec rake db:seed
 sudo apt-get install -y dirmngr gnupg apt-transport-https ca-certificates curl
 curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null
 sudo sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger jammy main > /etc/apt/sources.list.d/passenger.list'
-sudo apt-get update
+sudo apt-get update --allow-releaseinfo-change
 sudo apt-get install -y passenger libnginx-mod-http-passenger
 sudo /usr/bin/passenger-config validate-install --auto
 
