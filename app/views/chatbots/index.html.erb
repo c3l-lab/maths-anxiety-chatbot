@@ -27,11 +27,14 @@
               <td><%= local_time(c.conversation_finished_at) unless c.conversation_finished_at.blank? %></td>
               <td>
                 <div class="is-flex flex-direction-row">
-                  <%= link_to "Chat", edit_chatbot_path(c), class: "button is-small is-light mr-3" %>
+                  <%= link_to "View", edit_chatbot_path(c), class: "button is-small is-light mr-3" %>
                   <%= button_to "Delete",
                   chatbot_path(c),
                   method: :delete,
-                  class: "button is-small is-danger is-light" %>
+                  class: "button is-small is-danger is-light",
+                  data: {
+                    turbo_confirm: "Are you sure you want to delete this conversation?",
+                  } %>
                 </div>
               </td>
             </tr>
